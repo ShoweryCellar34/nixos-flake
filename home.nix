@@ -9,18 +9,15 @@ in
   home.stateVersion  = "26.05";
 
   sops.defaultSopsFile = ./secrets/secrets.yaml;
-
-  sops.age.keyFile = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
-
-  sops.secrets.git_identity = {};
+  sops.age.keyFile     = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
 
   sops.secrets."ssh/public".path = "${config.home.homeDirectory}/.ssh/authorized_keys";
+  sops.secrets.git_identity      = {};
 
   home.packages = with pkgs; [
     neovim
     libnotify
     spotify
-    gh
 
     grim
     slurp
@@ -64,6 +61,15 @@ in
       includes = [
         { path = config.sops.secrets.git_identity.path; }
       ];
+    };
+
+    gh = {
+      enable                     = true;
+      gitCredentialHelper.enable = true; 
+
+      settings = {
+        git_protocol = "ssh";
+      };
     };
 
     keepassxc = {

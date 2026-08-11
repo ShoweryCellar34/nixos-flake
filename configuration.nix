@@ -8,6 +8,17 @@ in
       ./specialisations.nix
   ];
 
+  sops.defaultSopsFile = ./secrets/secrets.yaml;
+  sops.age.keyFile     = "/home/ShoweryCellar34/.config/sops/age/keys.txt";
+
+  sops.secrets."wireguard/surfshark_private_key"  = {};
+  sops.secrets."wireguard/proton_usa_private_key" = {};
+
+  sops.templates."wireguard-nm.env".content = ''
+    SURFSHARK_VPN_PRIVATE_KEY=${config.sops.placeholder."wireguard/surfshark_private_key"}
+    PROTON_USA_VPN_PRIVATE_KEY=${config.sops.placeholder."wireguard/proton_usa_private_key"}
+  '';
+
   environment.systemPackages = with pkgs; [
     fastfetch
     wget
@@ -247,8 +258,114 @@ in
 
   # Network Settings
   networking = {
-    firewall = {
+    hostName = "MSI-Katana-15-B13V-NixOS";
+
+    networkmanager = {
       enable = true;
+
+      ensureProfiles = {
+        environmentFiles = [ config.sops.templates."wireguard-nm.env".path ];
+
+        profiles = {
+          surfshark-auckland = {
+            connection = {
+              id                   = "Surfshark Auckland";
+              type                 = "wireguard";
+              interface-name       = "wg-vpn";
+              autoconnect          = false;
+            };
+            wireguard = {
+              private-key = "$SURFSHARK_VPN_PRIVATE_KEY";
+            };
+            "wireguard-peer.xv8P19y0m9ojrLelCaPzGtaVv7tlPzLgZxvAD7lpYDg=" = {
+              endpoint             = "nz-akl.prod.surfshark.com:51820";
+              allowed-ips          = "0.0.0.0/0";
+              persistent-keepalive = "25";
+            };
+            ipv4 = {
+              method   = "manual";
+              address1 = "10.14.0.2/16";
+              dns      = "162.252.172.57;149.154.159.92";
+            };
+            ipv6.method = "disabled";
+          };
+
+          surfshark-san-francisco = {
+            connection = {
+              id                   = "Surfshark San Francisco";
+              type                 = "wireguard";
+              interface-name       = "wg-vpn";
+              autoconnect          = false;
+            };
+            wireguard = {
+              private-key = "$SURFSHARK_VPN_PRIVATE_KEY";
+            };
+            "wireguard-peer.7SpGSSI78hf8jy689ec5Ql0/Gsq0LLHDmjEFsGUWl1k=" = {
+              endpoint             = "us-sfo.prod.surfshark.com:51820";
+              allowed-ips          = "0.0.0.0/0";
+              persistent-keepalive = "25";
+            };
+            ipv4 = {
+              method   = "manual";
+              address1 = "10.14.0.2/16";
+              dns      = "162.252.172.57;149.154.159.92";
+            };
+            ipv6.method = "disabled";
+          };
+
+          surfshark-sydney = {
+            connection = {
+              id                   = "Surfshark Sydney";
+              type                 = "wireguard";
+              interface-name       = "wg-vpn";
+              autoconnect          = false;
+            };
+            wireguard = {
+              private-key = "$SURFSHARK_VPN_PRIVATE_KEY";
+            };
+            "wireguard-peer.Y5KM9kHdM0upMsIJWUQquOY1RgkWX69AHw/Dl5KyIk4=" = {
+              endpoint             = "au-syd.prod.surfshark.com:51820";
+              allowed-ips          = "0.0.0.0/0";
+              persistent-keepalive = "25";
+            };
+            ipv4 = {
+              method   = "manual";
+              address1 = "10.14.0.2/16";
+              dns      = "162.252.172.57;149.154.159.92";
+            };
+            ipv6.method = "disabled";
+          };
+
+          proton-usa = {
+            connection = {
+              id                   = "Proton USA";
+              type                 = "wireguard";
+              interface-name       = "wg-vpn";
+              autoconnect          = false;
+            };
+            wireguard = {
+              private-key = "$PROTON_USA_VPN_PRIVATE_KEY";
+            };
+            "wireguard-peer.gucaLaM/mgJQbHVvnZNtW+1L4Mi7E2mtTMrhS0K4miU=" = {
+              endpoint             = "146.70.230.146:51820";
+              allowed-ips          = "0.0.0.0/0;::/0";
+              persistent-keepalive = "25";
+            };
+            ipv4 = {
+              method   = "manual";
+              address1 = "10.2.0.2/32";
+              address2 = "2a07:b944::2:2/128";
+              dns      = "10.2.0.1;2a07:b944::2:1";
+            };
+            ipv6.method = "disabled";
+          };
+        };
+      };
+    };
+
+    firewall = {
+      enable           = true;
+      checkReversePath = "loose";
 
       trustedInterfaces = [
         "lo"
@@ -258,9 +375,6 @@ in
       allowedUDPPorts = [
       ];
     };
-
-    hostName              = "MSI-Katana-15-B13V-NixOS";
-    networkmanager.enable = true;
   };
 
   stylix = {
@@ -345,4 +459,3 @@ in
 
   system.stateVersion = "26.05";
 }
-
