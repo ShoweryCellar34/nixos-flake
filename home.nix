@@ -20,6 +20,7 @@ in
     neovim
     libnotify
     spotify
+    gh
 
     grim
     slurp
