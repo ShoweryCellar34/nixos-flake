@@ -26,22 +26,26 @@ in
     sops
     age
     ssh-to-age
+    git
 
     brightnessctl
     playerctl
+
     kdePackages.ark
     gamescope
     whatsapp-electron
     vlc
     ristretto
     mousepad
+    qbittorrent
   ];
 
   programs = {
-    dconf.enable  = true;
-    xfconf.enable = true;
-    direnv.enable = true;
-    nix-ld.enable = true;
+    dconf.enable    = true;
+    xfconf.enable   = true;
+    direnv.enable   = true;
+    nix-ld.enable   = true;
+    gamemode.enable = true;
 
     bash = {
       enable = true;
@@ -66,7 +70,8 @@ in
       '';
 
       shellAliases = {
-        nrs = "sudo nixos-rebuild boot --flake . && sudo /nix/var/nix/profiles/system/\${NIXOS_SPECIALISATION:+specialisation/\${NIXOS_SPECIALISATION}/}bin/switch-to-configuration test";
+        nrs = "time sudo env NIXOS_SPECIALISATION=\"$NIXOS_SPECIALISATION\" sh -c 'nixos-rebuild boot --flake . && /nix/var/nix/profiles/system/\${NIXOS_SPECIALISATION:+specialisation/\${NIXOS_SPECIALISATION}/}bin/switch-to-configuration test'";
+        nfu = "time nix flake update";
       };
     };
 
@@ -161,16 +166,15 @@ in
     power-profiles-daemon.enable  = true;
     displayManager.regreet.enable = true;
     gnome.gnome-keyring.enable    = true;
-    blueman.enable                = true;
     udisks2.enable                = true;
     gvfs.enable                   = true;
     tumbler.enable                = true;
 
     upower = {
       enable              = true;
-      percentageLow       = 15;
-      percentageCritical  = 5;
-      percentageAction    = 3;
+      percentageLow       = 20;
+      percentageCritical  = 10;
+      percentageAction    = 5;
       criticalPowerAction = "Hibernate";
     };
 
@@ -238,8 +242,7 @@ in
     rtkit.enable = true;
 
     pam = {
-      services.login.enableGnomeKeyring = true;
-      services.hyprlock                 = {};
+      services.greetd.enableGnomeKeyring = true;
     };
 
     polkit = {
@@ -381,7 +384,7 @@ in
     enable       = true;
     polarity     = "dark";    
     base16Scheme = "${pkgs.base16-schemes}/share/themes/ayu-dark.yaml";
-    image        = ./gruvbox-dark-blue.png;
+    image        = ./dark-background.png;
 
     icons = {
       enable  = true;
@@ -401,17 +404,18 @@ in
         package = pkgs.nerd-fonts.jetbrains-mono;
         name    = "JetBrainsMono Nerd Font";
       };
-      
       sansSerif = {
         package = pkgs.dejavu_fonts;
         name    = "DejaVu Sans";
       };
-      
       serif = {
         package = pkgs.dejavu_fonts;
         name    = "DejaVu Serif";
       };
-
+      emoji = {
+        package = pkgs.noto-fonts-color-emoji;
+        name    = "Noto Color Emoji";
+      };
       sizes = {
         applications = 14;
         terminal     = 8;

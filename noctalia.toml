@@ -1,0 +1,132 @@
+[bar.main]
+background_opacity = 1.0
+center = [ "taskbar" ]
+concave_edge_corners = false
+contact_shadow = false
+enabled = true
+end = [ "tray", "Spacer", "notifications", "bluetooth", "network", "volume", "battery", "sysmon", "session" ]
+margin_ends = 0
+position = "top"
+radius = 0
+shadow = false
+start = [ "clock", "media", "workspaces", "privacy" ]
+
+[battery]
+warning_threshold = 20
+
+[dock]
+background_opacity = 1.0
+
+[idle]
+behavior_order = [ "lock", "screen-off" ]
+pre_action_fade_seconds = 10
+
+    [idle.behavior.lock]
+    action = "lock"
+    enabled = true
+    timeout = 600.0
+
+    [idle.behavior.screen-off]
+    action = "screen_off"
+    enabled = true
+    timeout = 660.0
+
+[shell]
+clipboard_auto_paste = "off"
+launch_apps_custom_command = "uwsm app -- $CMD"
+polkit_agent = true
+
+    [shell.animation]
+    enabled = false
+
+    [shell.panel]
+    transparency_mode = "solid"
+
+    [shell.screenshot]
+    directory = "~/pictures/screenshots"
+
+    [[shell.session.actions]]
+    action = "lock"
+    countdown_seconds = 0.0
+    enabled = true
+    shortcut = "1"
+    variant = "default"
+
+    [[shell.session.actions]]
+    action = "logout"
+    command = "hyprshutdown -t \"Logging Out...\""
+    countdown_seconds = 0.0
+    enabled = true
+    shortcut = "2"
+    variant = "secondary"
+
+    [[shell.session.actions]]
+    action = "command"
+    command = "noctalia msg session lock && systemctl hibernate"
+    countdown_seconds = 0.0
+    enabled = true
+    glyph = "hibernate"
+    label = "Hibernate"
+    shortcut = "3"
+    variant = "primary"
+
+    [[shell.session.actions]]
+    action = "reboot"
+    command = "hyprshutdown -t \"Rebooting...\" -p \"systemctl reboot\""
+    countdown_seconds = 0.0
+    enabled = true
+    shortcut = "4"
+    variant = "destructive"
+
+    [[shell.session.actions]]
+    action = "shutdown"
+    command = "hyprshutdown -t \"Shutting Down...\" -p \"systemctl poweroff\""
+    countdown_seconds = 0.0
+    enabled = true
+    shortcut = "5"
+    variant = "destructive"
+
+    [shell.shadow]
+    alpha = 0.0
+
+[system.monitor]
+cpu_poll_seconds = 1
+cpu_temp_activity_threshold = 70
+cpu_temp_critical_threshold = 90
+cpu_usage_activity_threshold = 60
+disk_free_activity_threshold = 75
+disk_free_critical_threshold = 90
+disk_free_pct_activity_threshold = 75
+disk_free_pct_critical_threshold = 90
+disk_poll_seconds = 2
+disk_used_activity_threshold = 75
+disk_used_critical_threshold = 90
+disk_used_pct_activity_threshold = 75
+disk_used_pct_critical_threshold = 90
+gpu_poll_seconds = 1
+gpu_vram_activity_threshold = 60
+memory_poll_seconds = 1
+network_poll_seconds = 1
+
+[widget.Spacer]
+type = "spacer"
+
+[widget.clock]
+format = "%d/%m/%Y %H:%M:%S"
+
+[widget.network]
+show_vpn_label = true
+
+[widget.sysmon]
+show_value = false
+stat = "ram_pct"
+visualization = "none"
+
+[widget.taskbar]
+pinned = [ "dev.noctalia.Noctalia", "alacritty", "thunar", "keepassxc", "spotify", "code", "firefox" ]
+pinned_opacity = 0.7
+scale = 1.25
+
+[widget.tray]
+detached_panel = true
+drawer = true

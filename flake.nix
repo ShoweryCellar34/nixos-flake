@@ -16,8 +16,8 @@
       url                    = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    firefox-addons = {
-      url                    = "gitlab:rycee/nur-expressions?dir=pkgs/firefox-addons";
+    noctalia = {
+      url                    = "github:noctalia-dev/noctalia";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
@@ -39,7 +39,7 @@
             inputs.sops-nix.homeManagerModules.sops
           ];
           home-manager.extraSpecialArgs = {
-            inherit (inputs) firefox-addons;
+            inherit (inputs) noctalia;
           };
         }
       ];

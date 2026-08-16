@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, noctalia, ... }:
 let
   c = config.lib.stylix.colors;
   f = config.stylix.fonts;
@@ -7,6 +7,15 @@ in
   home.username      = "ShoweryCellar34";
   home.homeDirectory = "/home/ShoweryCellar34";
   home.stateVersion  = "26.05";
+
+  home.activation = {
+    createFolders = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      $DRY_RUN_CMD mkdir -p $HOME/downloads
+      $DRY_RUN_CMD mkdir -p $HOME/documents
+      $DRY_RUN_CMD mkdir -p $HOME/pictures/screenshots
+      $DRY_RUN_CMD mkdir -p $HOME/videos
+    '';
+  };
 
   sops.defaultSopsFile = ./secrets/secrets.yaml;
   sops.age.keyFile     = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
@@ -18,41 +27,67 @@ in
     neovim
     libnotify
     spotify
+    zathura
 
-    grim
-    slurp
-    swappy
     wl-clipboard
     cliphist
+    xwayland-satellite
 
     hyprshutdown
     hyprpwcenter
-
-    networkmanagerapplet
-    udiskie
   ];
 
   imports = [
+    noctalia.homeModules.default
     ./rclone.nix
-    ./stylix-lua.nix
-    ./ashell.nix
     ./firefox.nix
   ];
 
-  wayland.windowManager.hyprland = {
-    enable         = true;
-    systemd.enable = false;
-
-    extraLuaFiles = {
-      "myConfig.lua" = { content = ./hypr/myConfig.lua; };
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "application/pdf"        = "org.pwmt.zathura.desktop";
+      "image/png"              = "ristretto.desktop";
+      "image/jpeg"             = "ristretto.desktop";
+      "text/plain"             = "mousepad.desktop";
+      "video/mp4"              = "vlc.desktop";
+      "inode/directory"        = "thunar.desktop";
+      "x-scheme-handler/http"  = "firefox.desktop";
+      "x-scheme-handler/https" = "firefox.desktop";
     };
   };
 
+  home.file.".config/gtk-3.0/bookmarks".text = ''
+    file://${config.home.homeDirectory}/downloads Downloads
+    file://${config.home.homeDirectory}/documents Documents
+    file://${config.home.homeDirectory}/pictures Pictures
+    file://${config.home.homeDirectory}/videos Videos
+    file://${config.home.homeDirectory}/Downloads Downloads
+    file://${config.home.homeDirectory}/google-drive Google Drive
+    file://${config.home.homeDirectory}/proton-drive Proton Drive
+    file://${config.home.homeDirectory}/mega-drive MEGA Drive
+  '';
+
+  wayland.windowManager.hyprland = {
+    enable                              = true;
+    systemd.enable                      = false;
+    extraLuaFiles."hpyrland-config.lua" = { content = ./hyprland-config.lua; };
+  };
+
+  stylix.targets.noctalia.enable = true;
+  stylix.targets.vscode.enable   = false;
+
   programs = {
-    hyprlock.enable          = true;
     alacritty.enable         = true;
     rofi.enable              = true;
     discord.enable           = true;
+    prismlauncher.enable     = true;
+
+    noctalia = {
+      enable         = true;
+      systemd.enable = true;
+      settings       = lib.importTOML ./noctalia.toml;
+    };
 
     git = {
       enable                      = true;
@@ -65,7 +100,7 @@ in
 
     gh = {
       enable                     = true;
-      gitCredentialHelper.enable = true; 
+      gitCredentialHelper.enable = true;
 
       settings = {
         git_protocol = "ssh";
@@ -85,6 +120,7 @@ in
           Enabled             = true;
         };
         GUI = {
+          MinimizeOnClose    = true;
           MinimizeToTray     = true;
           ShowTrayIcon       = true;
           TrayIconAppearance = "colorful";
@@ -100,9 +136,6 @@ in
           Math            = true;
           Punctuation     = true;
           Quotes          = true;
-        };
-        SSHAgent = {
-         Enabled = true;
         };
         Security = {
           ClearSearch                    = true;
@@ -127,14 +160,13 @@ in
     };
   };
 
-  stylix.targets.vscode.enable = false;
-
   services = {
-    hyprpolkitagent.enable        = true;
-    hyprpaper.enable              = true;
-    hyprlauncher.enable           = true;
-    network-manager-applet.enable = true;
-    remmina.enable                = true;
+    remmina.enable = true;
+
+    wl-clip-persist = {
+      enable         = true;
+      systemdTargets = [ "graphicla-session.target" ];
+    };
 
     wayvnc = {
       enable    = true;
@@ -169,22 +201,6 @@ in
       systemdTargets = [ "graphical-session.target" ]; 
     };
 
-    hypridle = {
-      enable = true;
-
-      settings = {
-        general = {
-          lock_cmd         = "pidof hyprlock || hyprlock --no-fade-in";
-          before_sleep_cmd = "loginctl lock-session";
-          after_sleep_cmd  = "hyprctl dispatch dpms on;";
-        };
-        listener = [{
-            timeout    = 900;
-            on-timeout = "loginctl lock-session";
-        }];
-      };
-    };
-
     kanshi = {
       enable = true;
 
@@ -200,32 +216,14 @@ in
     };
   };
 
-  systemd.user.services = {
-    restart-applets = {
-      Unit = {
-        Description = "Restarts applets that are sometimes be missed by AShell during startup";
-
-        After = [ "ashell.service" ];
-        PartOf = [ "ashell.service" ];
-      };
-      Install = {
-        WantedBy = [ "ashell.service" ];
-      };
-      Service = {
-        Type         = "oneshot";
-        ExecStartPre = "${pkgs.coreutils}/bin/sleep 5";
-        ExecStart    = "${pkgs.systemd}/bin/systemctl --user restart network-manager-applet.service udiskie.service";
-      };
-    };
+  home.sessionVariables = {
+    SSH_AUTH_SOCK      = "$XDG_RUNTIME_DIR/keyring/ssh";
+    NIXOS_OZONE_WL     = "1";
+    MOZ_ENABLE_WAYLAND = "1";
+    QT_QPA_PLATFORM    = "wayland";
   };
 
-  home.sessionVariables.SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/keyring/ssh";
-
-  xdg.configFile."uwsm/env".text = ''
-    export NIXOS_OZONE_WL=1
-    export MOZ_ENABLE_WAYLAND=1
-    export QT_QPA_PLATFORM=wayland
-  '';
+  xdg.configFile."uwsm/env".source = "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh";
 
   xdg.configFile."hypr/hyprtoolkit.conf".text = ''
     background     = 0xFF${c.base00}
