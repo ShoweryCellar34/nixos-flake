@@ -111,6 +111,8 @@ in
       enable = true;
 
       settings = {
+        SSHAgent.Enabled = true;
+
         General = {
           BackupBeforeSave = true;
           UseAtomicSaves   = true;
@@ -191,7 +193,6 @@ in
       components = [
         "pkcs11"
         "secrets"
-        "ssh"
       ];
     };
 
@@ -217,7 +218,7 @@ in
   };
 
   home.sessionVariables = {
-    SSH_AUTH_SOCK      = "$XDG_RUNTIME_DIR/keyring/ssh";
+    SSH_AUTH_SOCK      = "$XDG_RUNTIME_DIR/gcr/ssh";
     NIXOS_OZONE_WL     = "1";
     MOZ_ENABLE_WAYLAND = "1";
     QT_QPA_PLATFORM    = "wayland";
