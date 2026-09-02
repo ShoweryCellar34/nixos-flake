@@ -100,9 +100,13 @@ in
     };
 
     git = {
-      enable                      = true;
-      settings.init.defaultBranch = "main";
+      enable = true;
 
+      settings = {
+        init.defaultBranch = "main";
+        gpg.format         = "ssh";
+        user.signingkey    = config.sops.placeholder."ssh/public";
+      };
       includes = [
         { path = config.sops.secrets.git_identity.path; }
       ];
