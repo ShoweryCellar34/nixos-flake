@@ -15,6 +15,10 @@ in
       $DRY_RUN_CMD mkdir -p $HOME/pictures/screenshots
       $DRY_RUN_CMD mkdir -p $HOME/videos/captures
     '';
+    gitSetup = config.lib.dag.entryAfter ["writeBoundary"] ''
+      mkdir -p ${config.home.homeDirectory}/.ssh
+      echo "showerycellar34@proton.me $(cat ${config.sops.secrets."ssh/public".path})" > ${config.home.homeDirectory}/.ssh/allowed_signers
+    '';
   };
 
   sops.defaultSopsFile = ./secrets/secrets.yaml;
@@ -102,16 +106,19 @@ in
     git = {
       enable = true;
 
-      settings = {
-        init.defaultBranch = "main";
-        gpg.format         = "ssh";
-        user.signingkey    = "~/.ssh/authorized_keys";
-        commit.gpgsign     = true;
-        tag.gpgsign        = true;
+      signing = {
+        signByDefault = true;
+        key           = config.sops.secrets."ssh/public".path;
       };
-      includes = [
-        { path = config.sops.secrets.git_identity.path; }
-      ];
+      settings = {
+        init.defaultBranch         = "main";
+        gpg.format                 = "ssh";
+        gpg.ssh.allowedSignersFile = "${config.home.homeDirectory}/.ssh/allowed_signers";
+      };
+      includes = [{
+        # This is because we need username and email, but they are set at activation by sops-nix
+        path = config.sops.secrets.git_identity.path;
+      }];
     };
 
     gh = {
