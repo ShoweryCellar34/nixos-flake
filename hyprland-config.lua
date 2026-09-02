@@ -1,8 +1,15 @@
 ----------------------------------------------------------------
--- VARIABLES  (qtile's mod/terminal locals)
+-- VARIABLES
 ----------------------------------------------------------------
 local mainMod  = "SUPER"
 local terminal = "alacritty"
+
+----------------------------------------------------------------
+-- AUTOSTART
+----------------------------------------------------------------
+hl.on("hyprland.start", function()
+    hl.exec_cmd("uwsm app -- noctalia")
+end)
 
 ----------------------------------------------------------------
 -- MONITORS
@@ -43,7 +50,7 @@ hl.config({
 })
 
 ----------------------------------------------------------------
--- WINDOW FOCUS / MOVEMENT  (qtile's layout.left/right/down/up, shuffle_*, grow_*)
+-- WINDOW FOCUS / MOVEMENT
 ----------------------------------------------------------------
 hl.bind(mainMod .. " + Left",  hl.dsp.focus({ direction = "l" }))
 hl.bind(mainMod .. " + Right", hl.dsp.focus({ direction = "r" }))
@@ -162,9 +169,28 @@ hl.window_rule({
 })
 
 hl.window_rule({
+    match = {
+      class = "^(org.keepassxc.KeePassXC)$",
+      title = "^(Unlock Database - KeePassXC)$|^(KeePassXC - Browser Access Request)$"
+    },
+    float          = true,
+    stay_focused   = true,
+    rounding       = 5,
+    rounding_power = 2.0
+})
+
+hl.window_rule({
   match = {
     class = "^(steam)$",
     title = "^(?!Steam$).*$",
+  },
+  float = true,
+})
+
+hl.window_rule({
+  match = {
+    class = "^(Thunar)$",
+    title = [[.*Rename +"[^"]*".*]],
   },
   float = true,
 })

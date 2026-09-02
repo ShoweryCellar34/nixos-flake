@@ -1,4 +1,4 @@
-{ config, pkgs, lib, noctalia, ... }:
+{ config, pkgs, lib, ... }:
 let
   c = config.lib.stylix.colors;
   f = config.stylix.fonts;
@@ -11,19 +11,21 @@ in
   home.activation = {
     createFolders = lib.hm.dag.entryAfter ["writeBoundary"] ''
       $DRY_RUN_CMD mkdir -p $HOME/downloads
-      $DRY_RUN_CMD mkdir -p $HOME/documents
+      $DRY_RUN_CMD mkdir -p $HOME/documents/repositories
       $DRY_RUN_CMD mkdir -p $HOME/pictures/screenshots
-      $DRY_RUN_CMD mkdir -p $HOME/videos
+      $DRY_RUN_CMD mkdir -p $HOME/videos/captures
     '';
   };
 
   sops.defaultSopsFile = ./secrets/secrets.yaml;
-  sops.age.keyFile     = "${config.home.homeDirectory}/.config/sops/age/keys.txt";
+  sops.age.keyFile     = "/home/ShoweryCellar34/.config/sops/age/keys.txt";
 
   sops.secrets."ssh/public".path = "${config.home.homeDirectory}/.ssh/authorized_keys";
   sops.secrets.git_identity      = {};
 
   home.packages = with pkgs; [
+    noctalia
+
     neovim
     libnotify
     spotify
@@ -31,14 +33,13 @@ in
 
     wl-clipboard
     cliphist
-    xwayland-satellite
+    xwayland-satellite # waylandcraft uses this, not important
 
     hyprshutdown
     hyprpwcenter
   ];
 
   imports = [
-    noctalia.homeModules.default
     ./rclone.nix
     ./firefox.nix
   ];
@@ -74,19 +75,28 @@ in
     extraLuaFiles."hpyrland-config.lua" = { content = ./hyprland-config.lua; };
   };
 
-  stylix.targets.noctalia.enable = true;
   stylix.targets.vscode.enable   = false;
-
   programs = {
     alacritty.enable         = true;
-    rofi.enable              = true;
-    discord.enable           = true;
+    oh-my-posh.enable        = true;
+    vesktop.enable           = true;
     prismlauncher.enable     = true;
 
+    bash = {
+      enable = true;
+
+      initExtra = ''
+        fastfetch
+      '';
+      shellAliases = {
+        nrs = "time sudo env NIXOS_SPECIALISATION=\"$NIXOS_SPECIALISATION\" sh -c 'nixos-rebuild boot --flake . && /nix/var/nix/profiles/system/\${NIXOS_SPECIALISATION:+specialisation/\${NIXOS_SPECIALISATION}/}bin/switch-to-configuration test'";
+        nfu = "time nix flake update";
+      };
+    };
+
     noctalia = {
-      enable         = true;
-      systemd.enable = true;
-      settings       = lib.importTOML ./noctalia.toml;
+      enable   = true;
+      settings = lib.importTOML ./noctalia.toml;
     };
 
     git = {

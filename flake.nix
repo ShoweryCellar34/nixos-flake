@@ -16,10 +16,6 @@
       url                    = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    noctalia = {
-      url                    = "github:noctalia-dev/noctalia";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
 
   outputs = { self, nixpkgs, sops-nix, stylix, home-manager, ... }@inputs: {
@@ -28,8 +24,7 @@
         ./configuration.nix
         sops-nix.nixosModules.sops
         stylix.nixosModules.stylix
-        home-manager.nixosModules.home-manager
-        {
+        home-manager.nixosModules.home-manager {
           home-manager.useGlobalPkgs         = true;
           home-manager.useUserPackages       = true;
           home-manager.backupFileExtension   = "hmbackup";
@@ -38,9 +33,6 @@
           home-manager.sharedModules = [
             inputs.sops-nix.homeManagerModules.sops
           ];
-          home-manager.extraSpecialArgs = {
-            inherit (inputs) noctalia;
-          };
         }
       ];
     };

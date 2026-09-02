@@ -22,6 +22,8 @@
         "browser.newtabpage.activity-stream.showSponsoredTopSites"    = false;
         "browser.newtabpage.activity-stream.feeds.section.highlights" = false;
         "widget.disable-workspace-management"                         = true;
+        "browser.download.folderList"                                 = 2;
+        "browser.download.dir"                                        = "${config.home.homeDirectory}/downloads";
 
         "browser.uiCustomization.state" = {
           currentVersion  = 24;

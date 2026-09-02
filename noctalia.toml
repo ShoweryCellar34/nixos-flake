@@ -1,3 +1,6 @@
+[audio]
+enable_overdrive = true
+
 [bar.main]
 background_opacity = 1.0
 center = [ "taskbar" ]
@@ -9,17 +12,25 @@ margin_ends = 0
 position = "top"
 radius = 0
 shadow = false
-start = [ "clock", "media", "workspaces", "privacy" ]
+start = [ "recorder_3", "clock", "media", "workspaces", "privacy" ]
 
 [battery]
-warning_threshold = 20
+warning_threshold = 25
+
+[desktop_widgets]
+enabled = false
 
 [dock]
 background_opacity = 1.0
 
+[hooks]
+logging_out = "uwsm app -- hyprshutdown --no-fork -t \"Logging Out...\""
+rebooting = "uwsm app -- hyprshutdown --no-fork -t \"Rebooting...\""
+shutting_down = "uwsm app -- hyprshutdown --no-fork -t \"Shutting Down...\""
+
 [idle]
 behavior_order = [ "lock", "screen-off" ]
-pre_action_fade_seconds = 10
+pre_action_fade_seconds = 15
 
     [idle.behavior.lock]
     action = "lock"
@@ -31,15 +42,34 @@ pre_action_fade_seconds = 10
     enabled = true
     timeout = 660.0
 
+[lockscreen]
+fingerprint = false
+
+[plugin_settings."noctalia/screen_recorder"]
+color_range = "full"
+directory = "~/videos/captures"
+video_source = "focused"
+
+[plugins]
+enabled = [ "noctalia/screen_recorder" ]
+
 [shell]
 clipboard_auto_paste = "off"
+clipboard_history_max_entries = 1000
+external_ip_enabled = false
 launch_apps_custom_command = "uwsm app -- $CMD"
+password_style = "random"
 polkit_agent = true
+time_format = "{:%H:%M:%S}"
 
     [shell.animation]
     enabled = false
 
+    [shell.launcher]
+    compact = true
+
     [shell.panel]
+    list_item_background = true
     transparency_mode = "solid"
 
     [shell.screenshot]
@@ -54,7 +84,6 @@ polkit_agent = true
 
     [[shell.session.actions]]
     action = "logout"
-    command = "hyprshutdown -t \"Logging Out...\""
     countdown_seconds = 0.0
     enabled = true
     shortcut = "2"
@@ -62,7 +91,7 @@ polkit_agent = true
 
     [[shell.session.actions]]
     action = "command"
-    command = "noctalia msg session lock && systemctl hibernate"
+    command = 'systemctl hibernate'
     countdown_seconds = 0.0
     enabled = true
     glyph = "hibernate"
@@ -72,7 +101,6 @@ polkit_agent = true
 
     [[shell.session.actions]]
     action = "reboot"
-    command = "hyprshutdown -t \"Rebooting...\" -p \"systemctl reboot\""
     countdown_seconds = 0.0
     enabled = true
     shortcut = "4"
@@ -80,7 +108,6 @@ polkit_agent = true
 
     [[shell.session.actions]]
     action = "shutdown"
-    command = "hyprshutdown -t \"Shutting Down...\" -p \"systemctl poweroff\""
     countdown_seconds = 0.0
     enabled = true
     shortcut = "5"
@@ -109,13 +136,22 @@ memory_poll_seconds = 1
 network_poll_seconds = 1
 
 [widget.Spacer]
+length = 16
 type = "spacer"
 
 [widget.clock]
 format = "%d/%m/%Y %H:%M:%S"
 
+[widget.media]
+max_length = 180
+min_length = 60
+show_progress = true
+
 [widget.network]
 show_vpn_label = true
+
+[widget.recorder_3]
+type = "noctalia/screen_recorder:recorder"
 
 [widget.sysmon]
 show_value = false
@@ -123,10 +159,26 @@ stat = "ram_pct"
 visualization = "none"
 
 [widget.taskbar]
-pinned = [ "dev.noctalia.Noctalia", "alacritty", "thunar", "keepassxc", "spotify", "code", "firefox" ]
+pinned = [
+    "dev.noctalia.Noctalia",
+    "alacritty",
+    "thunar",
+    "keepassxc",
+    "spotify",
+    "code",
+    "steam",
+    "vesktop",
+    "whatsapp",
+    "firefox"
+]
 pinned_opacity = 0.7
 scale = 1.25
 
 [widget.tray]
 detached_panel = true
 drawer = true
+drawer_columns = 4
+
+[widget.workspaces]
+active_pill_size = 2.0
+pill_scale = 0.9
