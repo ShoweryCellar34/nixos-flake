@@ -105,7 +105,9 @@ in
       settings = {
         init.defaultBranch = "main";
         gpg.format         = "ssh";
-        user.signingkey    = config.sops.placeholder."ssh/public";
+        user.signingkey    = "~/.ssh/authorized_keys";
+        commit.gpgsign     = true;
+        tag.gpgsign        = true;
       };
       includes = [
         { path = config.sops.secrets.git_identity.path; }
