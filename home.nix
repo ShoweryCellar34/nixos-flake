@@ -1,31 +1,38 @@
-{ config, pkgs, lib, ... }:
+{
+  config,
+  pkgs,
+  lib,
+  ...
+}:
 let
   c = config.lib.stylix.colors;
   f = config.stylix.fonts;
 in
 {
-  home.username      = "ShoweryCellar34";
+  home.username = "ShoweryCellar34";
   home.homeDirectory = "/home/ShoweryCellar34";
-  home.stateVersion  = "26.05";
+  home.stateVersion = "26.05";
 
   home.activation = {
-    createFolders = lib.hm.dag.entryAfter ["writeBoundary"] ''
+    createFolders = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       $DRY_RUN_CMD mkdir -p $HOME/downloads
       $DRY_RUN_CMD mkdir -p $HOME/documents/repositories
       $DRY_RUN_CMD mkdir -p $HOME/pictures/screenshots
       $DRY_RUN_CMD mkdir -p $HOME/videos/captures
     '';
-    gitSetup = config.lib.dag.entryAfter ["writeBoundary"] ''
+    gitSetup = config.lib.dag.entryAfter [ "writeBoundary" ] ''
       mkdir -p ${config.home.homeDirectory}/.ssh
-      echo "showerycellar34@proton.me $(cat ${config.sops.secrets."ssh/public".path})" > ${config.home.homeDirectory}/.ssh/allowed_signers
+      echo "showerycellar34@proton.me $(cat ${
+        config.sops.secrets."ssh/public".path
+      })" > ${config.home.homeDirectory}/.ssh/allowed_signers
     '';
   };
 
   sops.defaultSopsFile = ./secrets/secrets.yaml;
-  sops.age.keyFile     = "/home/ShoweryCellar34/.config/sops/age/keys.txt";
+  sops.age.keyFile = "/home/ShoweryCellar34/.config/sops/age/keys.txt";
 
   sops.secrets."ssh/public".path = "${config.home.homeDirectory}/.ssh/authorized_keys";
-  sops.secrets.git_identity      = {};
+  sops.secrets.git_identity = { };
 
   home.packages = with pkgs; [
     noctalia
@@ -51,13 +58,13 @@ in
   xdg.mimeApps = {
     enable = true;
     defaultApplications = {
-      "application/pdf"        = "org.pwmt.zathura.desktop";
-      "image/png"              = "ristretto.desktop";
-      "image/jpeg"             = "ristretto.desktop";
-      "text/plain"             = "mousepad.desktop";
-      "video/mp4"              = "vlc.desktop";
-      "inode/directory"        = "thunar.desktop";
-      "x-scheme-handler/http"  = "firefox.desktop";
+      "application/pdf" = "org.pwmt.zathura.desktop";
+      "image/png" = "ristretto.desktop";
+      "image/jpeg" = "ristretto.desktop";
+      "text/plain" = "mousepad.desktop";
+      "video/mp4" = "vlc.desktop";
+      "inode/directory" = "thunar.desktop";
+      "x-scheme-handler/http" = "firefox.desktop";
       "x-scheme-handler/https" = "firefox.desktop";
     };
   };
@@ -67,24 +74,25 @@ in
     file://${config.home.homeDirectory}/documents Documents
     file://${config.home.homeDirectory}/pictures Pictures
     file://${config.home.homeDirectory}/videos Videos
-    file://${config.home.homeDirectory}/Downloads Downloads
     file://${config.home.homeDirectory}/google-drive Google Drive
     file://${config.home.homeDirectory}/proton-drive Proton Drive
     file://${config.home.homeDirectory}/mega-drive MEGA Drive
   '';
 
   wayland.windowManager.hyprland = {
-    enable                              = true;
-    systemd.enable                      = false;
-    extraLuaFiles."hpyrland-config.lua" = { content = ./hyprland-config.lua; };
+    enable = true;
+    systemd.enable = false;
+    extraLuaFiles."hpyrland-config.lua" = {
+      content = ./hyprland-config.lua;
+    };
   };
 
-  stylix.targets.vscode.enable   = false;
+  stylix.targets.vscode.enable = false;
   programs = {
-    alacritty.enable         = true;
-    oh-my-posh.enable        = true;
-    vesktop.enable           = true;
-    prismlauncher.enable     = true;
+    alacritty.enable = true;
+    oh-my-posh.enable = true;
+    vesktop.enable = true;
+    prismlauncher.enable = true;
 
     bash = {
       enable = true;
@@ -99,7 +107,7 @@ in
     };
 
     noctalia = {
-      enable   = true;
+      enable = true;
       settings = lib.importTOML ./noctalia.toml;
     };
 
@@ -108,21 +116,23 @@ in
 
       signing = {
         signByDefault = true;
-        key           = config.sops.secrets."ssh/public".path;
+        key = config.sops.secrets."ssh/public".path;
       };
       settings = {
-        init.defaultBranch         = "main";
-        gpg.format                 = "ssh";
+        init.defaultBranch = "main";
+        gpg.format = "ssh";
         gpg.ssh.allowedSignersFile = "${config.home.homeDirectory}/.ssh/allowed_signers";
       };
-      includes = [{
-        # This is because we need username and email, but they are set at activation by sops-nix
-        path = config.sops.secrets.git_identity.path;
-      }];
+      includes = [
+        {
+          # This is because we need username and email, but they are set at activation by sops-nix
+          path = config.sops.secrets.git_identity.path;
+        }
+      ];
     };
 
     gh = {
-      enable                     = true;
+      enable = true;
       gitCredentialHelper.enable = true;
 
       settings = {
@@ -138,40 +148,40 @@ in
 
         General = {
           BackupBeforeSave = true;
-          UseAtomicSaves   = true;
+          UseAtomicSaves = true;
         };
         Browser = {
           CustomProxyLocation = "";
-          Enabled             = true;
+          Enabled = true;
         };
         GUI = {
-          MinimizeOnClose    = true;
-          MinimizeToTray     = true;
-          ShowTrayIcon       = true;
+          MinimizeOnClose = true;
+          MinimizeToTray = true;
+          ShowTrayIcon = true;
           TrayIconAppearance = "colorful";
         };
         PasswordGenerator = {
           AdditionalChars = "";
-          AdvancedMode    = true;
-          Braces          = true;
-          Dashes          = true;
-          ExcludedChars   = "";
-          Length          = 32;
-          Logograms       = true;
-          Math            = true;
-          Punctuation     = true;
-          Quotes          = true;
+          AdvancedMode = true;
+          Braces = true;
+          Dashes = true;
+          ExcludedChars = "";
+          Length = 32;
+          Logograms = true;
+          Math = true;
+          Punctuation = true;
+          Quotes = true;
         };
         Security = {
-          ClearSearch                    = true;
-          HideTotpPreviewPanel           = true;
-          IconDownloadFallback           = true;
-          LockDatabaseIdle               = true;
-          LockDatabaseIdleSeconds        = 300;
-          LockDatabaseMinimize           = false;
-          LockDatabaseScreenLock         = true;
+          ClearSearch = true;
+          HideTotpPreviewPanel = true;
+          IconDownloadFallback = true;
+          LockDatabaseIdle = true;
+          LockDatabaseIdleSeconds = 300;
+          LockDatabaseMinimize = false;
+          LockDatabaseScreenLock = true;
           NoConfirmMoveEntryToRecycleBin = false;
-          Security_HideNotes             = true;
+          Security_HideNotes = true;
         };
       };
     };
@@ -189,25 +199,25 @@ in
     remmina.enable = true;
 
     wl-clip-persist = {
-      enable         = true;
-      systemdTargets = [ "graphicla-session.target" ];
+      enable = true;
+      systemdTargets = [ "graphical-session.target" ];
     };
 
     wayvnc = {
-      enable    = true;
+      enable = true;
       autoStart = true;
 
       settings = {
         address = "127.0.0.1";
-        port    = 5900;
+        port = 5900;
       };
     };
 
     udiskie = {
-      enable    = true;
+      enable = true;
       automount = true;
-      notify    = true;
-      tray      = "always";
+      notify = true;
+      tray = "always";
     };
 
     gnome-keyring = {
@@ -220,9 +230,9 @@ in
     };
 
     cliphist = {
-      enable         = true;
-      allowImages    = true; 
-      systemdTargets = [ "graphical-session.target" ]; 
+      enable = true;
+      allowImages = true;
+      systemdTargets = [ "graphical-session.target" ];
     };
 
     kanshi = {
@@ -241,13 +251,14 @@ in
   };
 
   home.sessionVariables = {
-    SSH_AUTH_SOCK      = "$XDG_RUNTIME_DIR/gcr/ssh";
-    NIXOS_OZONE_WL     = "1";
+    SSH_AUTH_SOCK = "$XDG_RUNTIME_DIR/gcr/ssh";
+    NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";
-    QT_QPA_PLATFORM    = "wayland";
+    QT_QPA_PLATFORM = "wayland";
   };
 
-  xdg.configFile."uwsm/env".source = "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh";
+  xdg.configFile."uwsm/env".source =
+    "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh";
 
   xdg.configFile."hypr/hyprtoolkit.conf".text = ''
     background     = 0xFF${c.base00}
