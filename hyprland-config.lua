@@ -190,7 +190,15 @@ hl.window_rule({
 hl.window_rule({
   match = {
     class = "^(Thunar)$",
-    title = [[.*Rename +"[^"]*".*]],
+    title = '^Rename ".*',
+  },
+  float = true,
+})
+
+hl.window_rule({
+  match = {
+    class = "^(Thunar)$",
+    title = "^(File Operation Progress)$",
   },
   float = true,
 })

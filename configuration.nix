@@ -52,12 +52,27 @@ in
   ];
 
   programs = {
+    virt-manager.enable = true;
     dconf.enable = true;
     xfconf.enable = true;
     direnv.enable = true;
-    nix-ld.enable = true;
     gamemode.enable = true;
     gpu-screen-recorder.enable = true;
+
+    nix-ld = {
+      enable = true;
+
+      # War Thunder
+      libraries = with pkgs; [
+        libXrandr
+        libX11
+        gtk3
+        glib
+        libxkbcommon
+        libXcursor
+        vulkan-loader
+      ];
+    };
 
     ccache = {
       enable = true;
@@ -135,6 +150,7 @@ in
     plymouth.enable = true;
     enableContainers = true;
     kernelPackages = pkgs.linuxPackages_zen;
+    extraModprobeConfig = "options kvm_intel nested=1";
 
     extraModulePackages = [
       config.boot.kernelPackages.msi-ec
@@ -155,8 +171,6 @@ in
       "kernel.split_lock_mitigate" = 0;
       "vm.max_map_count" = 2147483642;
     };
-
-    # Use the GRUB EFI boot loader.
     loader = {
       efi.canTouchEfiVariables = true;
       timeout = 5;
@@ -165,6 +179,25 @@ in
         enable = true;
         efiSupport = true;
         maxGenerations = 5;
+      };
+    };
+  };
+
+  virtualisation = {
+    spiceUSBRedirection.enable = true;
+
+    libvirtd = {
+      enable = true;
+      nss.enableGuest = true;
+      dbus.enable = true;
+
+      qemu = {
+        runAsRoot = true;
+        swtpm.enable = true;
+
+        vhostUserPackages = with pkgs; [
+          virtiofsd
+        ];
       };
     };
   };
@@ -349,6 +382,7 @@ in
     extraGroups = [
       "wheel"
       "networkmanager"
+      "libvirtd"
     ];
     packages = with pkgs; [
       brightnessctl
@@ -358,10 +392,16 @@ in
       mangohud
       whatsapp-electron
       vlc
-      ristretto
       mousepad
       qbittorrent
       tor-browser
+      wine
+      vulkan-tools
+      gparted-full
+      pinta
+      rar
+      unrar
+      monero-gui
     ];
   };
 

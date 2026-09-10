@@ -25,8 +25,8 @@ background_opacity = 1.0
 
 [hooks]
 logging_out = "uwsm app -- hyprshutdown --no-fork -t \"Logging Out...\""
-rebooting = "uwsm app -- hyprshutdown --no-fork -t \"Rebooting...\""
-shutting_down = "uwsm app -- hyprshutdown --no-fork -t \"Shutting Down...\""
+rebooting = "uwsm app -- hyprshutdown --no-fork -t \"Rebooting...\" -p \"systemctl reboot\""
+shutting_down = "uwsm app -- hyprshutdown --no-fork -t \"Shutting Down...\" -p \"systemctl poweroff\""
 
 [idle]
 behavior_order = [ "lock", "screen-off" ]

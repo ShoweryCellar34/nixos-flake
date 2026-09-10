@@ -59,8 +59,8 @@ in
     enable = true;
     defaultApplications = {
       "application/pdf" = "org.pwmt.zathura.desktop";
-      "image/png" = "ristretto.desktop";
-      "image/jpeg" = "ristretto.desktop";
+      "image/png" = "pinta.desktop";
+      "image/jpeg" = "pinta.desktop";
       "text/plain" = "mousepad.desktop";
       "video/mp4" = "vlc.desktop";
       "inode/directory" = "thunar.desktop";
@@ -70,10 +70,10 @@ in
   };
 
   home.file.".config/gtk-3.0/bookmarks".text = ''
-    file://${config.home.homeDirectory}/downloads Downloads
-    file://${config.home.homeDirectory}/documents Documents
-    file://${config.home.homeDirectory}/pictures Pictures
-    file://${config.home.homeDirectory}/videos Videos
+    file://${config.home.homeDirectory}/downloads downloads
+    file://${config.home.homeDirectory}/documents documents
+    file://${config.home.homeDirectory}/pictures pictures
+    file://${config.home.homeDirectory}/videos videos
     file://${config.home.homeDirectory}/google-drive Google Drive
     file://${config.home.homeDirectory}/proton-drive Proton Drive
     file://${config.home.homeDirectory}/mega-drive MEGA Drive
@@ -101,7 +101,7 @@ in
         fastfetch
       '';
       shellAliases = {
-        nrs = "time sudo env NIXOS_SPECIALISATION=\"$NIXOS_SPECIALISATION\" sh -c 'nixos-rebuild boot --flake . && /nix/var/nix/profiles/system/\${NIXOS_SPECIALISATION:+specialisation/\${NIXOS_SPECIALISATION}/}bin/switch-to-configuration test'";
+        nrs = "sudo time env NIXOS_SPECIALISATION=\"$NIXOS_SPECIALISATION\" sh -c 'nixos-rebuild boot --flake . && /nix/var/nix/profiles/system/\${NIXOS_SPECIALISATION:+specialisation/\${NIXOS_SPECIALISATION}/}bin/switch-to-configuration test'";
         nfu = "time nix flake update";
       };
     };
@@ -255,25 +255,26 @@ in
     NIXOS_OZONE_WL = "1";
     MOZ_ENABLE_WAYLAND = "1";
     QT_QPA_PLATFORM = "wayland";
+    LIBVIRT_DEFAULT_URI = "qemu:///system";
   };
 
   xdg.configFile."uwsm/env".source =
     "${config.home.sessionVariablesPackage}/etc/profile.d/hm-session-vars.sh";
 
   xdg.configFile."hypr/hyprtoolkit.conf".text = ''
-    background     = 0xFF${c.base00}
-    base           = 0xFF${c.base00}
+    background = 0xFF${c.base00}
+    base = 0xFF${c.base00}
     alternate_base = 0xFF${c.base01}
 
-    text        = 0xFF${c.base05}
+    text = 0xFF${c.base05}
     bright_text = 0xFF${c.base07}
 
-    accent           = 0xFF${c.base0D}
+    accent = 0xFF${c.base0D}
     accent_secondary = 0xFF${c.base0B}
 
     font_size = ${toString f.sizes.applications}
-    h1_size   = ${toString (f.sizes.applications + 8)}
-    h2_size   = ${toString (f.sizes.applications + 4)}
-    h3_size   = ${toString (f.sizes.applications + 2)}
+    h1_size = ${toString (f.sizes.applications + 8)}
+    h2_size = ${toString (f.sizes.applications + 4)}
+    h3_size = ${toString (f.sizes.applications + 2)}
   '';
 }
