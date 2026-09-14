@@ -4,6 +4,15 @@
     "default"
   ];
 
+  home.file.".mozilla/i2p-proxy.pac".text = ''
+    function FindProxyForURL(url, host) {
+      if (dnsDomainIs(host, ".i2p") || host == "i2p") {
+        return "PROXY 127.0.0.1:4444";
+      }
+      return "DIRECT";
+    }
+  '';
+
   programs.firefox = {
     enable = true;
     profiles.default = {
@@ -92,6 +101,12 @@
       OverrideFirstRunPage = "";
       OverridePostUpdatePage = "";
 
+      Proxy = {
+        Mode = "autoConfig";
+        AutoConfigURL = "file://${config.home.homeDirectory}/.mozilla/i2p-proxy.pac";
+        Locked = true;
+      };
+
       AIControls = {
         Default.Value = "blocked";
         Translations.Value = "available";
@@ -114,8 +129,19 @@
           installation_mode = "force_installed";
           install_url = "https://addons.mozilla.org/firefox/downloads/latest/keepassxc-browser/latest.xpi";
           default_area = "navbar";
+        };
+        "sponsorBlocker@ajay.app" = {
+          installation_mode = "force_installed";
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/sponsorblock/latest.xpi";
+        };
+        "{762f9885-5a13-4abd-9c77-433dcd38b8fd}" = {
+          installation_mode = "force_installed";
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/return-youtube-dislikes/latest.xpi";
+        };
+      };
 
-          autoReconnect = true;
+      "3rdparty".Extensions = {
+        "keepassxc-browser@keepassxc.org".settings = {
           afterFillSorting = "sortByMatchingCredentials";
           afterFillSortingTotp = "sortByRelevantEntry";
           autoCompleteUsernames = true;
@@ -132,16 +158,14 @@
           connectionMethod = "nativemessaging";
           credentialSorting = "sortByGroupAndTitle";
           debugLogging = false;
-          defaultGroup = "root";
-          defaultPasskeyGroup = "";
-          defaultPasswordManager = true;
+          defaultGroup = "Root";
+          defaultPasskeyGroup = "Root";
           defaultGroupAlwaysAsk = false;
-          downloadFaviconAfterSave = false;
-          passkeys = false;
+          downloadFaviconAfterSave = true;
+          passkeys = true;
           passkeysFallback = true;
           redirectAllowance = 3;
           saveDomainOnly = true;
-          saveDomainOnlyNewCreds = true;
           showGroupNameInAutocomplete = true;
           showLoginFormIcon = true;
           showLoginNotifications = true;
@@ -152,14 +176,6 @@
           useObserver = true;
           usePredefinedSites = true;
           usePasswordGeneratorIcons = true;
-        };
-        "sponsorBlocker@ajay.app" = {
-          installation_mode = "force_installed";
-          install_url = "https://addons.mozilla.org/firefox/downloads/latest/sponsorblock/latest.xpi";
-        };
-        "{762f9885-5a13-4abd-9c77-433dcd38b8fd}" = {
-          installation_mode = "force_installed";
-          install_url = "https://addons.mozilla.org/firefox/downloads/latest/return-youtube-dislikes/latest.xpi";
         };
       };
     };

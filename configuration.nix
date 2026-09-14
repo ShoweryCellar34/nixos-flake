@@ -49,6 +49,7 @@ in
     git
     ntfs3g
     noctalia-greeter
+    # wl-clipboard # Waydroid needs this for clipboard sharing
   ];
 
   programs = {
@@ -200,6 +201,10 @@ in
         ];
       };
     };
+    waydroid = {
+      enable = true;
+      package = pkgs.waydroid-nftables;
+    };
   };
 
   # System Services
@@ -316,6 +321,26 @@ in
       };
     };
 
+    i2pd = {
+      enable = true;
+
+      settings = {
+        port = 4443;
+        bandwidth = 2048;
+        ipv6 = true;
+        upnp.enabled = true;
+      };
+
+      serverTunnels = {
+        testSite = {
+          type = "http";
+          host = "127.0.0.1";
+          port = 8080;
+          keys = "testSite-keys.dat";
+        };
+      };
+    };
+
     displayManager.noctalia-greeter = {
       enable = true;
 
@@ -361,6 +386,34 @@ in
         };
       };
     };
+
+    monero = {
+      enable = true;
+      prune = true;
+    };
+  };
+
+  systemd.services.simple-http-server = {
+    description = "Simple Embedded HTTP Server for I2P";
+    wantedBy = [ "multi-user.target" ];
+    after = [ "network.target" ];
+    
+    script = ''
+      # Create a temporary directory in memory for the session
+      cd $(mktemp -d)
+      
+      # Embed your HTML file right here
+      cat << 'EOF' > index.html
+      <!DOCTYPE html>
+      <html>
+      <head><title>Hello I2P</title></head>
+      <body><h1>yo.</h1></body>
+      </html>
+      EOF
+
+      # Start the Python web server
+      ${pkgs.python3}/bin/python3 -m http.server 8080 --bind 127.0.0.1
+    '';
   };
 
   # Security Settings
@@ -402,6 +455,7 @@ in
       rar
       unrar
       monero-gui
+      i2pd-tools
     ];
   };
 
@@ -552,10 +606,13 @@ in
 
       trustedInterfaces = [
         "lo"
+        "waydroid0"
       ];
       allowedTCPPorts = [
+        4443
       ];
       allowedUDPPorts = [
+        4443
       ];
     };
   };

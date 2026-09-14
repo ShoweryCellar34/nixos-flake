@@ -177,7 +177,7 @@ in
           HideTotpPreviewPanel = true;
           IconDownloadFallback = true;
           LockDatabaseIdle = true;
-          LockDatabaseIdleSeconds = 300;
+          LockDatabaseIdleSeconds = 600;
           LockDatabaseMinimize = false;
           LockDatabaseScreenLock = true;
           NoConfirmMoveEntryToRecycleBin = false;
