@@ -20,9 +20,10 @@ in
       $DRY_RUN_CMD mkdir -p $HOME/pictures/screenshots
       $DRY_RUN_CMD mkdir -p $HOME/videos/captures
     '';
-    gitSetup = config.lib.dag.entryAfter [ "writeBoundary" ] ''
+    gitSetup = config.lib.dag.entryAfter [ "writeBoundary" "sops-nix" ] ''
       mkdir -p ${config.home.homeDirectory}/.ssh
-      echo "showerycellar34@proton.me $(cat ${
+      gitEmail="$(${pkgs.git}/bin/git config --file ${config.sops.secrets.git_identity.path} --get user.email)"
+      echo "$gitEmail $(cat ${
         config.sops.secrets."ssh/public".path
       })" > ${config.home.homeDirectory}/.ssh/allowed_signers
     '';
@@ -82,7 +83,7 @@ in
   wayland.windowManager.hyprland = {
     enable = true;
     systemd.enable = false;
-    extraLuaFiles."hpyrland-config.lua" = {
+    extraLuaFiles."hyprland-config.lua" = {
       content = ./hyprland-config.lua;
     };
   };
@@ -123,12 +124,10 @@ in
         gpg.format = "ssh";
         gpg.ssh.allowedSignersFile = "${config.home.homeDirectory}/.ssh/allowed_signers";
       };
-      includes = [
-        {
-          # This is because we need username and email, but they are set at activation by sops-nix
-          path = config.sops.secrets.git_identity.path;
-        }
-      ];
+      includes = [{
+        # This is because we need username and email, but they are set at activation by sops-nix
+        path = config.sops.secrets.git_identity.path;
+      }];
     };
 
     gh = {
@@ -196,8 +195,6 @@ in
   };
 
   services = {
-    remmina.enable = true;
-
     wl-clip-persist = {
       enable = true;
       systemdTargets = [ "graphical-session.target" ];

@@ -47,7 +47,10 @@
     rclone-google-drive = {
       Unit = {
         Description = "Automount Rclone Google Drive Remote";
-        After = [ "network-online.target" ];
+        After = [
+          "network-online.target"
+          "sops-nix.service"
+        ];
       };
       Install = {
         WantedBy = [ "default.target" ];
@@ -70,7 +73,10 @@
     rclone-proton-drive = {
       Unit = {
         Description = "Automount Rclone Proton Drive Remote";
-        After = [ "network-online.target" ];
+        After = [
+          "network-online.target"
+          "sops-nix.service"
+        ];
       };
       Install = {
         WantedBy = [ "default.target" ];
@@ -93,7 +99,10 @@
     rclone-mega-drive = {
       Unit = {
         Description = "Automount Rclone MEGA Drive Remote";
-        After = [ "network-online.target" ];
+        After = [
+          "network-online.target"
+          "sops-nix.service"
+        ];
       };
       Install = {
         WantedBy = [ "default.target" ];

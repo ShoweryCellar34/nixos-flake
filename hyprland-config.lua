@@ -110,7 +110,7 @@ hl.bind("XF86AudioStop",    hl.dsp.exec_cmd("playerctl stop"),             { loc
 hl.bind("XF86AudioPlay",    hl.dsp.exec_cmd("noctalia msg media toggle"),  { locked = true })
 hl.bind("XF86AudioPause",   hl.dsp.exec_cmd("noctalia msg media toggle"),  { locked = true })
 hl.bind("XF86AudioNext",    hl.dsp.exec_cmd("noctalia msg media next"),    { locked = true })
-hl.bind("XF86AudioPrev",    hl.dsp.exec_cmd("noctalia msg media prevous"), { locked = true })
+hl.bind("XF86AudioPrev",    hl.dsp.exec_cmd("noctalia msg media previous"), { locked = true })
 hl.bind("XF86AudioForward", hl.dsp.exec_cmd("playerctl position 10+"),     { locked = true })
 hl.bind("XF86AudioRewind",  hl.dsp.exec_cmd("playerctl position 10-"),     { locked = true })
 
@@ -138,30 +138,14 @@ hl.bind(mainMod .. " + mouse:274", hl.dsp.window.bring_to_top())
 -- RULES
 ----------------------------------------------------------------
 hl.window_rule({
-    match          = { class = "^(ssh-askpass)$" },
-    float          = true,
-    stay_focused   = true,
-    rounding       = 5,
-    rounding_power = 2.0
-})
-
-hl.window_rule({
-    match          = { class = "^(pinentry.*)$" },
-    float          = true,
-    stay_focused   = true,
-    rounding       = 5,
-    rounding_power = 2.0
-})
-
-hl.window_rule({
-    match          = { class = "^(xdg-desktop-portal-gtk)$" },
+    match          = { class = "(?i)^xdg-desktop-portal-gtk$" },
     float          = true,
     rounding       = 5,
     rounding_power = 2.0
 })
 
 hl.window_rule({
-    match             = { title = "^([Pp]icture-in-[Pp]icture)$" },
+    match             = { title = "(?i)^picture[- ]in[- ]picture$" },
     float             = true,
     pin               = true,
     keep_aspect_ratio = true,
@@ -170,8 +154,8 @@ hl.window_rule({
 
 hl.window_rule({
     match = {
-      class = "^(org.keepassxc.KeePassXC)$",
-      title = "^(Unlock Database - KeePassXC)$|^(KeePassXC - Browser Access Request)$"
+        class = [[(?i)^org\.keepassxc\.keepassxc$]],
+        title = "^(Unlock Database - KeePassXC|KeePassXC - Browser Access Request)$",
     },
     float          = true,
     stay_focused   = true,
@@ -180,25 +164,25 @@ hl.window_rule({
 })
 
 hl.window_rule({
-  match = {
-    class = "^(steam)$",
-    title = "^(?!Steam$).*$",
-  },
-  float = true,
+    match = {
+        class = "(?i)^steam$",
+        title = "negative:^Steam$",
+    },
+    float = true,
 })
 
 hl.window_rule({
-  match = {
-    class = "^(Thunar)$",
-    title = '^Rename ".*',
-  },
-  float = true,
+    match = {
+        class = "(?i)^thunar$",
+        title = '^Rename ".*',
+    },
+    float = true,
 })
 
 hl.window_rule({
-  match = {
-    class = "^(Thunar)$",
-    title = "^(File Operation Progress)$",
-  },
-  float = true,
+    match = {
+        class = "(?i)^thunar$",
+        title = "^File Operation Progress$",
+    },
+    float = true,
 })

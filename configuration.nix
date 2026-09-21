@@ -5,7 +5,6 @@
   ...
 }:
 let
-  llvmPkgs = pkgs.llvmPackages_22;
   c = config.lib.stylix.colors.withHashtag;
   cursor = config.stylix.cursor;
 
@@ -465,6 +464,7 @@ in
       unrar
       monero-gui
       i2pd-tools
+      remmina
     ];
   };
 

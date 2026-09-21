@@ -24,6 +24,7 @@
         "browser.startup.page" = 3;
         "browser.tabs.closeWindowWithLastTab" = true;
         "browser.fixup.alternate.enabled" = false;
+        "browser.fixup.domainsuffixwhitelist.i2p" = true;
         "signon.rememberSignons" = false;
         "extensions.autoDisableScopes" = 0;
         "privacy.globalprivacycontrol.enabled" = true;
@@ -118,6 +119,7 @@
         "keepassxc-browser@keepassxc.org"
         "sponsorBlocker@ajay.app"
         "{762f9885-5a13-4abd-9c77-433dcd38b8fd}"
+        "{b9db16a4-6edc-47ec-a1f4-b86292ed211d}"
       ];
 
       ExtensionSettings = {
@@ -138,6 +140,10 @@
         "{762f9885-5a13-4abd-9c77-433dcd38b8fd}" = {
           installation_mode = "force_installed";
           install_url = "https://addons.mozilla.org/firefox/downloads/latest/return-youtube-dislikes/latest.xpi";
+        };
+        "{b9db16a4-6edc-47ec-a1f4-b86292ed211d}" = {
+          installation_mode = "force_installed";
+          install_url = "https://addons.mozilla.org/firefox/downloads/latest/video-downloadhelper/latest.xpi";
         };
       };
 
