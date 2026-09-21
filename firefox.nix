@@ -23,6 +23,7 @@
         "browser.startup.homepage" = "about:blank";
         "browser.startup.page" = 3;
         "browser.tabs.closeWindowWithLastTab" = true;
+        "browser.fixup.alternate.enabled" = false;
         "signon.rememberSignons" = false;
         "extensions.autoDisableScopes" = 0;
         "privacy.globalprivacycontrol.enabled" = true;

@@ -49,7 +49,8 @@ in
     git
     ntfs3g
     noctalia-greeter
-    # wl-clipboard # Waydroid needs this for clipboard sharing
+    man-pages-posix
+    # wl-clipboard # Waydroid needs this for clipboard sharing, maybe
   ];
 
   programs = {
@@ -329,6 +330,14 @@ in
         bandwidth = 2048;
         ipv6 = true;
         upnp.enabled = true;
+
+        addressbook.subscriptions = [
+          "http://reg.i2p/export/hosts-all.txt"
+          "http://notbob.i2p/hosts-all.txt"
+          "http://identiguy.i2p/hosts.txt"
+          "http://stats.i2p/cgi-bin/newhosts.txt"
+          "http://i2p-projekt.i2p/hosts.txt"
+        ];
       };
 
       serverTunnels = {
@@ -707,6 +716,19 @@ in
     extra-sandbox-paths = [
       config.programs.ccache.cacheDir
     ];
+  };
+
+  documentation = {
+    enable = true;
+    doc.enable = true;
+    info.enable = true;
+    nixos.enable = true;
+    dev.enable = true;
+
+    man = {
+      enable = true;
+      cache.enable = true;
+    };
   };
 
   system.stateVersion = "26.05";
